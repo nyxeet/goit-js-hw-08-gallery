@@ -1,5 +1,6 @@
 import gallery from './gallery-items.js'
 const galleryRef = document.querySelector('.js-gallery')
+const imagesRef = document.querySelectorAll('.gallery__image')
 const modalRefs = {
     closeModalBtn: document.querySelector('button[data-action="close-lightbox"]'),
     closeModalOverlay: document.querySelector('.lightbox__overlay'),
@@ -32,11 +33,9 @@ const createGalleryImage = element => {
     return liRef;
 }
 const galleryListRef = gallery.map(element => createGalleryImage(element))
-galleryRef.append(...galleryListRef)
 dataIndex = 1;
+galleryRef.append(...galleryListRef)
 
-
-const imagesRef = document.querySelectorAll('.gallery__image')
 
 
 
@@ -85,8 +84,15 @@ function getLeftElement(elements, index) {
         }
     }
 }
-
-
+function openModal(event){
+    event.preventDefault();
+    if (event.target.nodeName != 'IMG') {
+        return;
+    }
+    modalRefs.image.setAttribute('src', event.target.dataset.source) 
+    modalRefs.image.setAttribute('data-index', event.target.dataset.index)
+    modalRefs.modal.classList.add('is-open')
+}
 function closeModalByClick(event) {
     modalRefs.modal.classList.remove('is-open');
     modalRefs.image.setAttribute('src', '');
@@ -99,14 +105,11 @@ function closeModalByEscape(event) {
         }
     }
 }
-function openModal(event){
-    event.preventDefault();
-    if (event.target.nodeName != 'IMG') {
-        return;
-    }
-    modalRefs.image.setAttribute('src', event.target.dataset.source) 
-    modalRefs.image.setAttribute('data-index', event.target.dataset.index)
-    modalRefs.modal.classList.add('is-open')
-}
+
+
+
+
+
+
 
 
