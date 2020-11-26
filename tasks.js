@@ -47,8 +47,8 @@ window.addEventListener('keydown', event => {
             if (currentIndex == 1) {
                 return;
             }
-            const newElement = getLeftElement(imagesRef, currentIndex);
-            modalRefs.image.setAttribute('src', newElement);
+            const newElementSrc = getLeftElement(imagesRef, currentIndex);
+            modalRefs.image.setAttribute('src', newElementSrc);
             modalRefs.image.setAttribute('data-index', Number(currentIndex) - 1);
         }
     }
@@ -60,12 +60,17 @@ window.addEventListener('keydown', event => {
             if (currentIndex == 9) {
                 return;
             }
-            const newElement = getRightElement(imagesRef, currentIndex);
-            modalRefs.image.setAttribute('src', newElement);
+            const newElementSrc = getRightElement(imagesRef, currentIndex);
+            modalRefs.image.setAttribute('src', newElementSrc);
             modalRefs.image.setAttribute('data-index', Number(currentIndex) + 1);
         }
     }
 })
+
+// Можно сделать через Array.from!!!!
+// Или через [...nodelist]
+// Спросить у ментора
+
 function getRightElement(elements, index) {
     for (let i = 0; i <= elements.length - 1; i += 1){
         if (elements[i].dataset.index == Number(index) + 1) {
