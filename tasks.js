@@ -37,21 +37,17 @@ dataIndex = 1;
 
 
 const imagesRef = document.querySelectorAll('.gallery__image')
-console.log(imagesRef)
 
 
-
-
-window.addEventListener('keydown', event => {
-    console.log(event.key)
-})
 
 window.addEventListener('keydown', event => {
     if (modalRefs.modal.classList.contains('is-open')) {
         if (event.key == 'ArrowLeft') {
             const currentIndex = modalRefs.image.dataset.index;
+            if (currentIndex == 1) {
+                return;
+            }
             const newElement = getLeftElement(imagesRef, currentIndex);
-            console.log(newElement)
             modalRefs.image.setAttribute('src', newElement);
             modalRefs.image.setAttribute('data-index', Number(currentIndex) - 1);
         }
@@ -61,6 +57,9 @@ window.addEventListener('keydown', event => {
     if (modalRefs.modal.classList.contains('is-open')) {
         if (event.key == 'ArrowRight') {
             const currentIndex = modalRefs.image.dataset.index;
+            if (currentIndex == 9) {
+                return;
+            }
             const newElement = getRightElement(imagesRef, currentIndex);
             modalRefs.image.setAttribute('src', newElement);
             modalRefs.image.setAttribute('data-index', Number(currentIndex) + 1);
