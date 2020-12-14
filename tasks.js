@@ -73,20 +73,18 @@ window.addEventListener('keydown', event => {
 })
 
 // Можно сделать по нормальному
-// Array.from!!!!
-//  [...nodelist]
 // Спросить у ментора
 function getRightElement(elements, index) {
-    for (let i = 0; i <= elements.length - 1; i += 1){
-        if (elements[i].dataset.index == Number(index) + 1) {
-            return elements[i].dataset.source;
+    for (const element of elements){
+        if (element.dataset.index == Number(index) + 1) {
+            return element.dataset.source;
         }
     }
 }
 function getLeftElement(elements, index) {
-    for (let i = 0; i <= elements.length - 1; i += 1){
-        if (elements[i].dataset.index == Number(index) - 1) {
-            return elements[i].dataset.source;
+    for (const element of elements){
+        if (element.dataset.index == Number(index) - 1) {
+            return element.dataset.source;
         }
     }
 }
