@@ -13,62 +13,68 @@ window.addEventListener('keydown', closeModalByEscape)
 modalRefs.closeModalBtn.addEventListener('click', closeModalByClick)
 modalRefs.closeModalOverlay.addEventListener('click', closeModalByClick)
 
-let dataIndex = 1; 
-const createGalleryImage = element => {
-    const liRef = document.createElement('li')
-    liRef.classList.add('gallery__item');
-    const linkRef = document.createElement('a');
-    linkRef.classList.add('gallery__link');
-    linkRef.setAttribute('href', element.original)
-    const imageRef = document.createElement('img');
-    imageRef.classList.add('gallery__image');
-    imageRef.setAttribute('src' , element.preview) 
-    imageRef.setAttribute('data-source', element.original)
-    imageRef.setAttribute('alt', element.description)
-    linkRef.append(imageRef);
-    liRef.append(linkRef);
-    imageRef.setAttribute('data-index', dataIndex);
-    dataIndex += 1;
-    return liRef;
+
+const createGalleryImage = elements => {
+    let dataIndex = 1; 
+    const galleryListRef = elements.map(element => {
+        const liRef = document.createElement('li')
+        liRef.classList.add('gallery__item');
+
+        const linkRef = document.createElement('a');
+        linkRef.classList.add('gallery__link');
+        linkRef.setAttribute('href', element.original)
+
+        const imageRef = document.createElement('img');
+        imageRef.classList.add('gallery__image');
+        imageRef.setAttribute('src' , element.preview) 
+        imageRef.setAttribute('data-source', element.original)
+        imageRef.setAttribute('alt', element.description)
+
+        linkRef.append(imageRef);
+        liRef.append(linkRef);
+        imageRef.setAttribute('data-index', dataIndex);
+        dataIndex += 1;
+        return liRef;
+    })
+    galleryRef.append(...galleryListRef)
 }
-const galleryListRef = gallery.map(element => createGalleryImage(element))
-galleryRef.append(...galleryListRef)
-dataIndex = 1;
+createGalleryImage(gallery);
 
 
 const imagesRef = document.querySelectorAll('.gallery__image')
 
-
-
 window.addEventListener('keydown', event => {
-    if (modalRefs.modal.classList.contains('is-open')) {
-        if (event.key == 'ArrowLeft') {
-            const currentIndex = modalRefs.image.dataset.index;
-            if (currentIndex == 1) {
-                return;
-            }
-            const newElementSrc = getLeftElement(imagesRef, currentIndex);
-            modalRefs.image.setAttribute('src', newElementSrc);
-            modalRefs.image.setAttribute('data-index', Number(currentIndex) - 1);
+    if (!modalRefs.modal.classList.contains('is-open')) {
+        return;
+    }
+    if (event.key == 'ArrowLeft') {
+        const currentIndex = modalRefs.image.dataset.index;
+        if (currentIndex == 1) {
+            return;
         }
+        const newElementSrc = getLeftElement(imagesRef, currentIndex);
+        modalRefs.image.setAttribute('src', newElementSrc);
+        modalRefs.image.setAttribute('data-index', Number(currentIndex) - 1);
     }
 })
 window.addEventListener('keydown', event => {
-    if (modalRefs.modal.classList.contains('is-open')) {
-        if (event.key == 'ArrowRight') {
-            const currentIndex = modalRefs.image.dataset.index;
-            if (currentIndex == 9) {
-                return;
-            }
-            const newElementSrc = getRightElement(imagesRef, currentIndex);
-            modalRefs.image.setAttribute('src', newElementSrc);
-            modalRefs.image.setAttribute('data-index', Number(currentIndex) + 1);
+    if (!modalRefs.modal.classList.contains('is-open')) {
+        return;
+    }
+    if (event.key == 'ArrowRight') {
+        const currentIndex = modalRefs.image.dataset.index;
+        if (currentIndex == 9) {
+               return;
         }
+         const newElementSrc = getRightElement(imagesRef, currentIndex);
+         modalRefs.image.setAttribute('src', newElementSrc);
+         modalRefs.image.setAttribute('data-index', Number(currentIndex) + 1);
     }
 })
 
-// Можно сделать через Array.from!!!!
-// Или через [...nodelist]
+// Можно сделать по нормальному
+// Array.from!!!!
+//  [...nodelist]
 // Спросить у ментора
 function getRightElement(elements, index) {
     for (let i = 0; i <= elements.length - 1; i += 1){
@@ -90,14 +96,17 @@ function closeModalByClick(event) {
     modalRefs.modal.classList.remove('is-open');
     modalRefs.image.setAttribute('src', '');
 }
+
 function closeModalByEscape(event) {
-    if (modalRefs.modal.classList.contains('is-open')) {
-        if (event.code === 'Escape') {
+    if (!modalRefs.modal.classList.contains('is-open')) {
+        return;
+    }
+    if (event.code === 'Escape') {
           modalRefs.modal.classList.remove('is-open');
           modalRefs.image.setAttribute('src', '');
         }
-    }
 }
+
 function openModal(event){
     event.preventDefault();
     if (event.target.nodeName != 'IMG') {
