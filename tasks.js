@@ -1,20 +1,72 @@
 import gallery from './gallery-items.js'
-const galleryRef = document.querySelector('.js-gallery')
-const modalRefs = {
-    closeModalBtn: document.querySelector('button[data-action="close-lightbox"]'),
+
+
+
+const refs = {
+    galleryRef : document.querySelector('.js-gallery'),
     closeModalOverlay: document.querySelector('.lightbox__overlay'),
     modal: document.querySelector('.lightbox'),
     image: document.querySelector('.lightbox__image'),
+    closeModalBtn: document.querySelector('button[data-action="close-lightbox"]'),
 };
+
+const { closeModalOverlay, modal, image, closeModalBtn, galleryRef } = refs;
 
 
 galleryRef.addEventListener('click', openModal);
 window.addEventListener('keydown', closeModalByEscape)
-modalRefs.closeModalBtn.addEventListener('click', closeModalByClick)
-modalRefs.closeModalOverlay.addEventListener('click', closeModalByClick)
+closeModalBtn.addEventListener('click', closeModalByClick)
+closeModalOverlay.addEventListener('click', closeModalByClick)
 
 
-const createGalleryImage = elements => {
+let currentIndex = null;
+
+function getRightElement() {
+    currentIndex = currentIndex === gallery.length - 1 ? 0 : currentIndex + 1;
+    const { original } = gallery[currentIndex];
+    image.src = original;
+
+}
+function getLeftElement() {
+    currentIndex = currentIndex === 0 ? gallery.length - 1 : currentIndex - 1;
+    const { original } = gallery[currentIndex];
+    image.src = original;
+}
+function handleKeyPress({ code }) {
+    code === 'ArrowRight' && getRightElement();
+    code === 'ArrowLeft' && getLeftElement();  
+}
+function closeModalByClick() {
+    modal.classList.remove('is-open');
+    image.setAttribute('src', '');
+    currentIndex = null;
+    window.removeEventListener('keydown', handleKeyPress)
+}
+function closeModalByEscape({code}) {
+    if (!modal.classList.contains('is-open')) {
+        return;
+    }
+    if (code === 'Escape') {
+        modal.classList.remove('is-open');
+        image.setAttribute('src', '');
+        currentIndex = null;
+    }
+    window.addEventListener('keydown', handleKeyPress)
+}
+function openModal(e) {
+    const {nodeName, dataset} = e.target
+    e.preventDefault();
+    if (nodeName == 'IMG') {
+        const { source, index } = dataset
+        
+        image.setAttribute('src', source) 
+        image.setAttribute('data-index', +index)
+        modal.classList.add('is-open')
+        currentIndex = +index;
+    }
+    window.addEventListener('keydown', handleKeyPress)
+}
+function createGalleryMarkup(elements) {
     let dataIndex = 1; 
     const galleryListRef = elements.map(element => {
         const liRef = document.createElement('li')
@@ -36,83 +88,11 @@ const createGalleryImage = elements => {
         dataIndex += 1;
         return liRef;
     })
-    galleryRef.append(...galleryListRef)
+    return galleryListRef;
 }
-createGalleryImage(gallery);
-
-
-const imagesRef = document.querySelectorAll('.gallery__image')
-
-window.addEventListener('keydown', event => {
-    if (!modalRefs.modal.classList.contains('is-open')) {
-        return;
-    }
-    if (event.key == 'ArrowLeft') {
-        const currentIndex = modalRefs.image.dataset.index;
-        if (currentIndex == 1) {
-            return;
-        }
-        const newElementSrc = getLeftElement(imagesRef, currentIndex);
-        modalRefs.image.setAttribute('src', newElementSrc);
-        modalRefs.image.setAttribute('data-index', Number(currentIndex) - 1);
-    }
-})
-window.addEventListener('keydown', event => {
-    if (!modalRefs.modal.classList.contains('is-open')) {
-        return;
-    }
-    if (event.key == 'ArrowRight') {
-        const currentIndex = modalRefs.image.dataset.index;
-        if (currentIndex == 9) {
-               return;
-        }
-         const newElementSrc = getRightElement(imagesRef, currentIndex);
-         modalRefs.image.setAttribute('src', newElementSrc);
-         modalRefs.image.setAttribute('data-index', Number(currentIndex) + 1);
-    }
-})
-
-// Можно сделать по нормальному
-// Спросить у ментора
-function getRightElement(elements, index) {
-    for (const element of elements){
-        if (element.dataset.index == Number(index) + 1) {
-            return element.dataset.source;
-        }
-    }
+function renderGallery(markup) {
+    galleryRef.append(...markup)
 }
-function getLeftElement(elements, index) {
-    for (const element of elements){
-        if (element.dataset.index == Number(index) - 1) {
-            return element.dataset.source;
-        }
-    }
-}
-
-
-function closeModalByClick(event) {
-    modalRefs.modal.classList.remove('is-open');
-    modalRefs.image.setAttribute('src', '');
-}
-
-function closeModalByEscape(event) {
-    if (!modalRefs.modal.classList.contains('is-open')) {
-        return;
-    }
-    if (event.code === 'Escape') {
-          modalRefs.modal.classList.remove('is-open');
-          modalRefs.image.setAttribute('src', '');
-        }
-}
-
-function openModal(event){
-    event.preventDefault();
-    if (event.target.nodeName != 'IMG') {
-        return;
-    }
-    modalRefs.image.setAttribute('src', event.target.dataset.source) 
-    modalRefs.image.setAttribute('data-index', event.target.dataset.index)
-    modalRefs.modal.classList.add('is-open')
-}
+renderGallery(createGalleryMarkup(gallery));
 
 
